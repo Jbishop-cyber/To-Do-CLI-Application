@@ -3,24 +3,18 @@
     "task": "Study python",
     "completed": false,
     "priority": "High",
-    "due_date": "22-09-2026"
+    "due_date": "23-09-2026"
   },
   {
     "task": "Siesta",
     "completed": true,
-    "priority": "Low",
-    "due_date": "22-09-2026"
+    "priority": "Medium",
+    "due_date": "23-09-2026"
   },
   {
     "task": "Eat",
     "completed": true,
     "priority": "Low",
-    "due_date": "22-09-2026"
-  },
-  {
-    "task": "Home",
-    "completed": false,
-    "priority": "Medium",
-    "due_date": "22-09-2026"
+    "due_date": "23-09-2026"
   }
 ]

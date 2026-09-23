@@ -20,25 +20,25 @@ def add_task(tasks):
             continue
         break
 
-    while True:
-        due_date = input("Enter due date (DD-MM-YYYY): ").strip()
-        if not due_date:
-            print("Due date cannot be empty!")
-            continue
+    # while True:
+    #     due_date = input("Enter due date (DD-MM-YYYY): ").strip()
+    #     if not due_date:
+    #         print("Due date cannot be empty!")
+    #         continue
 
-        try:
-            datetime.strptime(due_date, "%d-%m-%Y")
-        except ValueError:
-            print("Invalid date! Use DD-MM-YYYY")
-            continue
+    #     try:
+    #         datetime.strptime(due_date, "%d-%m-%Y")
+    #     except ValueError:
+    #         print("Invalid date! Use DD-MM-YYYY")
+    #         continue
 
-        break
+    #     break
 
     new_task = {
         "task": title,
         "completed": False,
         "priority": priority,
-        "due_date": due_date
+        "due_date": datetime.now().strftime("%d-%m-%Y")
     }
     tasks.append(new_task)
 
@@ -56,7 +56,6 @@ def view_task(tasks):
     # print(f"*** {title} ***")
     # print(f"Number {tasks:<10} ")
     # print(line)
-
     print(
         f"{'Number':<10} {'Task':<25} {'Status':<12}"
         f"{'Priority':<12} {'Due_Date':<12}"
@@ -176,9 +175,9 @@ def delete_task(tasks):
             else:
                 print("Invalid input! Enter Y or N.")
 
-            if not tasks:
-                print("No more tasks left.")
-                break
+        if not tasks:
+            print("No more tasks left.")
+            break
 
         again = input(
             "Do you want to delete another task? (Y/N): "
