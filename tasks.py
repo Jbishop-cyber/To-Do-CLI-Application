@@ -1,6 +1,40 @@
 from datetime import datetime
 
 
+def select_task(tasks):
+    while True:
+        choice = input(
+            "Enter task number or type (c) to cancel: "
+        ).strip()
+
+        if choice.lower() == "c":
+            return None, None
+
+        try:
+            task_number = int(choice)
+        except ValueError:
+            print("Please enter a valid number!")
+            continue
+
+        if task_number < 1 or task_number > len(tasks):
+            print("Invalid task number")
+            continue
+
+        return task_number - 1, tasks[task_number - 1]
+
+
+def ask_yes_or_no(prompt):
+    while True:
+        answer = input(prompt).strip().upper()
+
+        if answer == "Y":
+            return True
+        elif answer == "N":
+            return False
+        else:
+            print("Invalid input! Enter Y or N.")
+
+
 def add_task(tasks):
     while True:
         title = input("What is this task? ").strip().capitalize()
@@ -20,20 +54,6 @@ def add_task(tasks):
             continue
         break
 
-    # while True:
-    #     due_date = input("Enter due date (DD-MM-YYYY): ").strip()
-    #     if not due_date:
-    #         print("Due date cannot be empty!")
-    #         continue
-
-    #     try:
-    #         datetime.strptime(due_date, "%d-%m-%Y")
-    #     except ValueError:
-    #         print("Invalid date! Use DD-MM-YYYY")
-    #         continue
-
-    #     break
-
     new_task = {
         "task": title,
         "completed": False,
@@ -46,20 +66,16 @@ def add_task(tasks):
 
 
 def view_task(tasks):
-    # title = "TO-DO LISTS"
     line = "-" * 72
 
     if not tasks:
         print("List is empty!")
         return
 
-    # print(f"*** {title} ***")
-    # print(f"Number {tasks:<10} ")
-    # print(line)
     print(
         f"{'Number':<10} {'Task':<25} {'Status':<12}"
         f"{'Priority':<12} {'Due_Date':<12}"
-        )
+    )
     print(line)
 
     for number, item in enumerate(tasks, start=1):
@@ -77,52 +93,22 @@ def complete_task(tasks):
 
     view_task(tasks)
 
-    while True:
-        task_ID = input(
-            "Enter the task number to complete or type (c) to cancel: "
-        ).strip()
+    _, selected = select_task(tasks)
 
-        if task_ID.lower() == "c":
-            print("Returning to menu....")
-            return
+    if selected is None:
+        print("Returning to menu...")
+        return
 
-        try:
-            task_number = int(task_ID)
-        except ValueError:
-            print("Please enter a valid task number!")
-            continue
+    print(
+        f"You selected: {selected['task']} "
+        f"due {selected['due_date']}"
+    )
 
-        if task_number < 1 or task_number > len(tasks):
-            print("Task not found!")
-
-            again = input(
-                "Do you want to search again (Y/N): ").strip().upper()
-
-            if again == "N":
-                print("Returning to menu....")
-                return
-            continue
-
-        selected = tasks[task_number - 1]
-        print(
-            f"You selected: {selected['task']} "
-            f"due {selected['due_date']}"
-        )
-
-        confirm = input(
-            "Are you sure you have completed this task? (Y/N): "
-        ).strip().upper()
-
-        if confirm == "Y":
-            selected["completed"] = True
-            print("Task marked as complete.")
-            return
-        elif confirm == "N":
-            print("Task not completed.")
-            return
-        else:
-            print("Invalid input. Returning to menu....")
-            return
+    if ask_yes_or_no("Are you sure you have completed this task? (Y/N): "):
+        selected["completed"] = True
+        print("Task marked as complete.")
+    else:
+        print("Task not completed.")
 
 
 def delete_task(tasks):
@@ -133,62 +119,31 @@ def delete_task(tasks):
     while True:
         view_task(tasks)
 
-        while True:
-            choice = input(
-                "Which task do you want to delete or type (c) to cancel "
-            ).strip()
+        index, selected = select_task(tasks)
+        if selected is None:
+            print("Returning to menu...")
+            return
 
-            if choice.lower() == "c":
-                print("Returning to menu....")
-                return
-
-            try:
-                task_choice = int(choice)
-            except ValueError:
-                print("Please enter a valid task number!")
-                continue
-
-            if task_choice < 1 or task_choice > len(tasks):
-                print("Invalid task number!")
-                continue
-            break
-
-        selected = tasks[task_choice - 1]
         print(
             f"You selected: {selected['task']}, "
             f"Completed: ({selected['completed']}) "
             f"Priority: ({selected['priority']})"
             )
 
-        while True:
-            confirm = input(
-                "Are you sure you want to delete this task (Y/N)? "
-            ).strip().upper()
-
-            if confirm == "Y":
-                tasks.pop(task_choice - 1)
-                print("Task deleted successfully!")
-                break
-            elif confirm == "N":
-                print("Deletion cancelled")
-                break
-            else:
-                print("Invalid input! Enter Y or N.")
+        if ask_yes_or_no("Are you sure you want to delete this task? (Y/N): "):
+            tasks.pop(index)
+            print("Task deleted successfully!")
+        else:
+            print("Deletion cancelled!")
 
         if not tasks:
             print("No more tasks left.")
             break
 
-        again = input(
-            "Do you want to delete another task? (Y/N): "
-        ).strip().upper()
-        if again == "Y":
+        if ask_yes_or_no("Do you want to delete another task? (Y/N): "):
             continue
-        elif again == "N":
-            break
         else:
-            print("Invalid input! Returning to menu....")
-            return
+            break
 
 
 def edit_task(tasks):
@@ -198,27 +153,11 @@ def edit_task(tasks):
 
     view_task(tasks)
 
-    while True:
-        choice = input(
-            "Which task do you want to edit or type (c) to cancel: "
-        ).strip()
+    _, selected = select_task(tasks)
 
-        if choice.lower() == "c":
-            print("Returning to menu...")
-            return
-
-        try:
-            task_number = int(choice)
-        except ValueError:
-            print("Please enter a valid number!")
-            continue
-
-        if task_number < 1 or task_number > len(tasks):
-            print("Invalid task number!")
-            continue
-
-        selected = tasks[task_number - 1]
-        break
+    if selected is None:
+        print("Returning to menu...")
+        return
 
     while True:
         view_task([selected])
@@ -237,9 +176,8 @@ def edit_task(tasks):
 
         if option == 1:
             while True:
-                new_title = input(
-                    f"Task title [{selected['task']}]: "
-                ).strip().capitalize()
+                new_title = input(f"Task title [{selected['task']}]: "
+                                  ).strip().capitalize()
 
                 if not new_title:
                     print("New title cannot be empty")
@@ -254,9 +192,8 @@ def edit_task(tasks):
 
         elif option == 2:
             while True:
-                new_priority = input(
-                    "How urgent is it? (High, Medium, Low: )"
-                ).strip().capitalize()
+                new_priority = input("How urgent is it? (High, Medium, Low: )"
+                                     ).strip().capitalize()
 
                 if new_priority not in ("High", "Medium", "Low"):
                     print("Select urgency from the options given")
@@ -292,6 +229,13 @@ def edit_task(tasks):
             print("Invalid option, choose between 1-4")
 
 
+def show_matches(matches, no_match_message):
+    if not matches:
+        print(no_match_message)
+    else:
+        view_task(matches)
+
+
 def filter_task(tasks):
     if not tasks:
         print("No tasks found!")
@@ -322,11 +266,7 @@ def filter_task(tasks):
                 if item['priority'] == target:
                     matches.append(item)
 
-            if not matches:
-                print(f"No matches found with {target} priority.")
-
-            else:
-                view_task(matches)
+            show_matches(matches, f"No match found with {target} priority.")
 
         elif choice == 2:
             print("1. Completed tasks")
@@ -346,10 +286,7 @@ def filter_task(tasks):
                 if item['completed'] == target_status:
                     matches.append(item)
 
-            if not matches:
-                print("No matching task found.")
-            else:
-                view_task(matches)
+            show_matches(matches, "No matching tasks found.")
 
         elif choice == 3:
             print("1. Day")
@@ -362,7 +299,7 @@ def filter_task(tasks):
             elif part_choice == "2":
                 target_choice = input("Enter month (1-12): ").strip()
             elif part_choice == "3":
-                target_choice = input("Enter year (e.g. 2026): ").strip()
+                target_choice = input("Enter year: ").strip()
             else:
                 print("Invalid option.")
                 continue
@@ -387,10 +324,7 @@ def filter_task(tasks):
                 elif part_choice == "3" and date.year == target:
                     matches.append(item)
 
-            if not matches:
-                print("No matches found.")
-            else:
-                view_task(matches)
+            show_matches(matches, "No matches found.")
 
         elif choice == 4:
             print("Returning to menu....")
