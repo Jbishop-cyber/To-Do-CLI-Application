@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 def select_task(tasks):
@@ -35,9 +35,30 @@ def ask_yes_or_no(prompt):
             print("Invalid input! Enter Y or N.")
 
 
+def ask_due_date():
+    while True:
+        try:
+            days = int(input(
+                "In how many days is this task due? (number only): "))
+            if days < 0:
+                print("Wrong Input!")
+                continue
+            break
+        except ValueError:
+            print("Due date in numbers only!")
+
+    later = datetime.now() + timedelta(days=days)
+    print(f"Due date set to - {later.strftime('%d-%m-%Y')}")
+    return later.strftime("%d-%m-%Y")
+
+
 def add_task(tasks):
     while True:
-        title = input("What is this task? ").strip().capitalize()
+        title = input(
+            "What is this task? or (press 'c' to cancel) ").strip().title()
+        if title.lower() == "c":
+            print("Task Cancelled!")
+            return
         if not title:
             print("Task title cannot be empty!")
             continue
@@ -47,8 +68,13 @@ def add_task(tasks):
         break
 
     while True:
-        priority = input("How urgent is it? "
-                         "(High, Medium or Low) ").strip().capitalize()
+        priority = input(
+            "How urgent is it? "
+            "(High, Medium or Low) or (press 'c' to cancel) "
+        ).strip().capitalize()
+        if priority.lower() == "c":
+            print("Task Cancelled!")
+            return
         if priority not in ("High", "Medium", "Low"):
             print("Please select urgency from given!")
             continue
@@ -58,7 +84,7 @@ def add_task(tasks):
         "task": title,
         "completed": False,
         "priority": priority,
-        "due_date": datetime.now().strftime("%d-%m-%Y")
+        "due_date": ask_due_date()
     }
     tasks.append(new_task)
 
@@ -124,11 +150,13 @@ def delete_task(tasks):
             print("Returning to menu...")
             return
 
-        print(
-            f"You selected: {selected['task']}, "
-            f"Completed: ({selected['completed']}) "
-            f"Priority: ({selected['priority']})"
-            )
+        # print(
+        #     f"You selected: {selected['task']}, "
+        #     f"Completed: ({selected['completed']}) "
+        #     f"Priority: ({selected['priority']})"
+        #     )
+
+        view_task([selected])
 
         if ask_yes_or_no("Are you sure you want to delete this task? (Y/N): "):
             tasks.pop(index)
@@ -204,22 +232,9 @@ def edit_task(tasks):
                 break
 
         elif option == 3:
-            while True:
-                new_due_date = input("Enter due date (DD-MM-YYYY): ").strip()
-
-                if not new_due_date:
-                    print("Due Date cannot be empty")
-                    continue
-
-                try:
-                    datetime.strptime(new_due_date, "%d-%m-%Y")
-                except ValueError:
-                    print("Invalid date! Use DD-MM-YYYY")
-                    continue
-
-                selected["due_date"] = new_due_date
-                print("Due_date updated successfully!")
-                break
+            selected["due_date"] = ask_due_date()
+            print("Due_date updated successfully!")
+            break
 
         elif option == 4:
             print("Finished editing this task.")

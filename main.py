@@ -1,3 +1,5 @@
+import subprocess
+
 from tasks import (
     add_task,
     view_task,
@@ -28,6 +30,7 @@ def main():
 
         try:
             choice = int(input("What do you want to do? "))
+            subprocess.run(['clear'])
         except ValueError:
             print("Your choice must be in digit!")
             continue

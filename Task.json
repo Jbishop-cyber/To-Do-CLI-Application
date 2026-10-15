@@ -1,20 +1,26 @@
 [
   {
-    "task": "Study python",
-    "completed": true,
+    "task": "Study Python",
+    "completed": false,
     "priority": "High",
-    "due_date": "24-09-2026"
+    "due_date": "20-10-2026"
   },
   {
-    "task": "Eat",
-    "completed": true,
-    "priority": "Low",
-    "due_date": "24-09-2026"
-  },
-  {
-    "task": "Siesta",
+    "task": "Pay Bills",
     "completed": false,
     "priority": "Medium",
-    "due_date": "24-09-2026"
+    "due_date": "16-10-2026"
+  },
+  {
+    "task": "Submit Report",
+    "completed": false,
+    "priority": "High",
+    "due_date": "25-10-2026"
+  },
+  {
+    "task": "Have Lunch",
+    "completed": true,
+    "priority": "Low",
+    "due_date": "15-10-2026"
   }
 ]
